@@ -1,0 +1,39 @@
+src
+├── app
+│   ├── dashboard
+│   │   ├── analytics
+│   │   │   └── page.tsx
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── globals.css
+│   ├── history
+│   │   └── page.tsx
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── predict
+│       ├── clinical
+│       │   └── page.tsx
+│       ├── fusion
+│       │   └── page.tsx
+│       └── image
+│           └── page.tsx
+├── components
+│   ├── charts
+│   ├── forms
+│   ├── layout
+│   │   ├── navbar.tsx
+│   │   ├── sidebar.tsx
+│   │   ├── theme-provider.tsx
+│   │   └── theme-toggle.tsx
+│   └── ui
+│       ├── button.tsx
+│       ├── card.tsx
+│       ├── input.tsx
+│       ├── label.tsx
+│       ├── radio-group.tsx
+│       └── switch.tsx
+├── lib
+│   └── utils.ts
+└── types
+
+15 directories, 21 files

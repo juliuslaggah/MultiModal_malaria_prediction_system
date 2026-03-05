@@ -1,0 +1,33 @@
+experiment_name: "Tabular_MLP_Benchmark"
+model:
+  type: "MLP"
+  input_dim: 14  # We will select 14 common features
+  hidden_dims: [64, 32]
+  output_dim: 2
+  dropout: 0.3
+
+training:
+  batch_size: 32
+  learning_rate: 0.001
+  epochs: 50
+  patience: 10 # For Early Stopping
+
+data:
+  train_path: "data/tabular/bangladesh/Malaria_Dataset.csv"
+  val_path: "data/tabular/sierra_leone/malaria_sl.csv" # Using SL as validation to test generalization immediately
+  features:
+    - "Age"
+    - "Sex"
+    - "Fever"
+    - "Headache"
+    - "Abdominal_Pain"
+    - "General_Body_Malaise"
+    - "Dizziness"
+    - "Vomiting"
+    - "Confusion"
+    - "Backache"
+    - "Chest_Pain"
+    - "Coughing"
+    - "Joint_Pain"
+    - "Risk_Score"
+  target: "Target"

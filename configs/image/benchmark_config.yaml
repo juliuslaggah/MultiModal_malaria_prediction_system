@@ -1,0 +1,31 @@
+experiment_name: "CNN_Severe_Robustness"
+random_seed: 42
+
+data:
+  image_dir: "/home/18T/julius_ww/Multimodal prediction system/data/images/tanzania"
+  image_size: 224
+  batch_size: 32
+  num_workers: 4
+  
+  # INCREASED SEVERITY for ~98% Target
+  augmentation:
+    horizontal_flip_prob: 0.5
+    vertical_flip_prob: 0.5
+    rotation_degrees: 180        # Was 45. Now full rotation allowed.
+    color_jitter: 0.6           # Was 0.3. Now 50% color distortion (Simulates bad staining)
+    gaussian_blur_prob: 0.6     # Was 0.3. Now 50% of images are blurry.
+    gaussian_blur_kernel: 7     # Was 3. This makes the blur much "thicker".
+
+models_to_compare:
+  - "mobilenet_v2"
+  - "shufflenet_v2_x1_0"
+  - "efficientnet_b0"
+
+training:
+  epochs: 15
+  learning_rate: 0.0001
+  optimizer: "Adam"
+  loss: "CrossEntropyLoss"
+  output_paths:
+    checkpoints: "/home/18T/julius_ww/Multimodal prediction system/outputs/checkpoints"
+    logs: "/home/18T/julius_ww/Multimodal prediction system/outputs/logs"

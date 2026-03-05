@@ -1,0 +1,73 @@
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+*.pyc
+*.pyo
+*.pyd
+.ipynb_checkpoints/
+
+# Large data files
+*.csv
+*.jpg
+*.xlsx
+*.xls
+*.npz
+*.npy
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+*.joblib
+*.pt
+*.pth
+*.weights.h5
+*.onnx
+*.pb
+*.tflite
+
+# Data directories
+data/
+datasets/
+input/
+output/
+processed/
+raw/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+*.db
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Project specific
+models/weights/
+models/checkpoints/
+logs/
+runs/
+wandb/
+mlruns/

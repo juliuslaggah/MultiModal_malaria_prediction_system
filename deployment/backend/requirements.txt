@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+python-multipart
+torch
+torchvision
+numpy
+pandas
+scikit-learn
+xgboost
+joblib
+pillow
+shap
+lime
+matplotlib
+sqlalchemy
+psycopg2-binary

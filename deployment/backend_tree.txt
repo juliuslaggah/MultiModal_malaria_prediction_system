@@ -1,0 +1,94 @@
+﻿Folder PATH listing for volume ??
+Volume serial number is 12A1-4ACC
+D:\THESIS\IMPLEMENTATION\MULTIMODAL PREDICTION SYSTEM\DEPLOYMENT\BACKEND
+ª   .env
+ª   Dockerfile
+ª   malaria.db
+ª   malaria.db.bak.20260113_023403
+ª   requirements.txt
+ª   system_audit.log
+ª   
++---app
+ª   ª   api.py
+ª   ª   database.py
+ª   ª   explainability.py
+ª   ª   main.py
+ª   ª   ml_service.py
+ª   ª   models.py
+ª   ª   schemas.py
+ª   ª   utils.py
+ª   ª   __init__.py
+ª   ª   
+ª   +---artifacts
+ª   ª       best_tabular_model.json
+ª   ª       selected_features.json
+ª   ª       shufflenet_best.pth
+ª   ª       tabular_imputer.pkl
+ª   ª       tabular_scaler.pkl
+ª   ª       
+ª   +---static
+ª   ª   +---heatmaps
+ª   ª   ª       3c51549e-1244-455f-8390-5ad5166d4c8d_cam.jpg
+ª   ª   ª       45dc7b72-58a7-4907-a931-1bd5cf7fa6e9_cam.jpg
+ª   ª   ª       60c0b3c9-cf8a-4d5f-9ce1-4c50fb08a531_cam.jpg
+ª   ª   ª       714cda2c-f4ee-4d9a-bc3a-3e62156a4fd6_cam.jpg
+ª   ª   ª       9d6a3eda-c0e7-4118-9ced-d4659ddfe972_cam.jpg
+ª   ª   ª       c7386a16-6b0c-4fe4-8082-14721971496c_cam.jpg
+ª   ª   ª       c86c09a6-59e4-48c2-b44f-8915322ec413_cam.jpg
+ª   ª   ª       d051cd35-6207-410e-9547-1d081aa3b12f_cam.jpg
+ª   ª   ª       d4ecdb5a-72b1-45da-8c17-2d239f0fd862_cam.jpg
+ª   ª   ª       de3c91b5-473a-47c2-b3fb-7d06a5eac200_cam.jpg
+ª   ª   ª       e8bdefb0-1c06-4dff-945a-8625972c496f_cam.jpg
+ª   ª   ª       gradcam_0bd7375f.jpg
+ª   ª   ª       gradcam_1b3e8fb8.jpg
+ª   ª   ª       gradcam_2375fdc1.jpg
+ª   ª   ª       gradcam_27aed2fd.jpg
+ª   ª   ª       gradcam_4c1608da.jpg
+ª   ª   ª       gradcam_56bfa075.jpg
+ª   ª   ª       gradcam_9797251c.jpg
+ª   ª   ª       gradcam_9810126c.jpg
+ª   ª   ª       gradcam_a892059a.jpg
+ª   ª   ª       gradcam_b332a656.jpg
+ª   ª   ª       gradcam_dbfd99b4.jpg
+ª   ª   ª       
+ª   ª   +---uploads
+ª   ª           3c51549e-1244-455f-8390-5ad5166d4c8d_orig.jpg
+ª   ª           45dc7b72-58a7-4907-a931-1bd5cf7fa6e9_orig.jpg
+ª   ª           60c0b3c9-cf8a-4d5f-9ce1-4c50fb08a531_orig.jpg
+ª   ª           714cda2c-f4ee-4d9a-bc3a-3e62156a4fd6_orig.jpg
+ª   ª           9d6a3eda-c0e7-4118-9ced-d4659ddfe972_orig.jpg
+ª   ª           c7386a16-6b0c-4fe4-8082-14721971496c_orig.jpg
+ª   ª           c86c09a6-59e4-48c2-b44f-8915322ec413_orig.jpg
+ª   ª           d051cd35-6207-410e-9547-1d081aa3b12f_orig.jpg
+ª   ª           d4ecdb5a-72b1-45da-8c17-2d239f0fd862_orig.jpg
+ª   ª           de3c91b5-473a-47c2-b3fb-7d06a5eac200_orig.jpg
+ª   ª           e8bdefb0-1c06-4dff-945a-8625972c496f_orig.jpg
+ª   ª           
+ª   +---__pycache__
+ª           api.cpython-310.pyc
+ª           api.cpython-311.pyc
+ª           database.cpython-310.pyc
+ª           database.cpython-311.pyc
+ª           main.cpython-310.pyc
+ª           main.cpython-311.pyc
+ª           ml_service.cpython-310.pyc
+ª           ml_service.cpython-311.pyc
+ª           models.cpython-310.pyc
+ª           models.cpython-311.pyc
+ª           schemas.cpython-310.pyc
+ª           schemas.cpython-311.pyc
+ª           utils.cpython-310.pyc
+ª           utils.cpython-311.pyc
+ª           __init__.cpython-310.pyc
+ª           __init__.cpython-311.pyc
+ª           
++---artifacts
+ª       best_tabular_model.json
+ª       selected_features.json
+ª       shufflenet_best.pth
+ª       tabular_imputer.pkl
+ª       tabular_scaler.pkl
+ª       
++---logs
+        .keep
+        

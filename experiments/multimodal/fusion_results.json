@@ -1,0 +1,21 @@
+{
+    "Mode_1_Clinical": {
+        "Accuracy": 0.9958847736625515,
+        "Precision": 0.9942528735632183,
+        "Recall": 1.0,
+        "F1": 0.9971181556195965
+    },
+    "Mode_2_Image": {
+        "Accuracy": 0.9876543209876543,
+        "Precision": 0.9941860465116279,
+        "Recall": 0.9884393063583815,
+        "F1": 0.991304347826087
+    },
+    "Mode_3_Fusion": {
+        "Accuracy": 1.0,
+        "Precision": 1.0,
+        "Recall": 1.0,
+        "F1": 1.0
+    },
+    "Optimal_Alpha": 0.5
+}
