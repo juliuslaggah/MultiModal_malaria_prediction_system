@@ -11,28 +11,114 @@ import {
   Users,
   Clock,
   CheckCircle2,
-  AlertTriangle
+  AlertTriangle,
+  MinusCircle
 } from 'lucide-react'
 
-// This would typically come from an API
+// Helper function to format time (fixed for UTC timestamps)
+const formatRelativeTime = (timestamp: string): string => {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  
+  if (diffInSeconds < 60) return `${diffInSeconds} seconds ago`;
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+  return `${Math.floor(diffInSeconds / 86400)} days ago`;
+};
+
+// This function now fetches REAL data from your backend
 const getStats = async () => {
-  // Mock data - replace with actual API call
-  return {
-    totalPredictions: 50,
-    infectedCount: 35,
-    uninfectedCount: 15,
-    accuracy: 94.5,
-    recentActivity: [
-      { id: 1, type: 'Clinical', result: 'Uninfected', time: '2 min ago' },
-      { id: 2, type: 'Image', result: 'Infected', time: '15 min ago' },
-      { id: 3, type: 'Fusion', result: 'Infected', time: '1 hour ago' },
-      { id: 4, type: 'Clinical', result: 'Uninfected', time: '2 hours ago' },
-    ]
+  try {
+    console.log('🔍 Fetching from backend...');
+    
+    // Fetch ALL predictions (up to 1000)
+    const response = await fetch('http://localhost:8000/history?skip=0&limit=1000', {
+      cache: 'no-store'
+    });
+    
+    console.log('📡 Response status:', response.status);
+    
+    if (!response.ok) {
+      console.error('❌ Response not OK:', response.status, response.statusText);
+      throw new Error(`Failed to fetch: ${response.status}`);
+    }
+    
+    const predictions = await response.json();
+    console.log('✅ Raw predictions data:', predictions);
+    console.log('📊 Number of predictions:', predictions.length);
+    
+    // Calculate stats from real data - handle all cases
+    const totalPredictions = predictions.length;
+    const infectedCount = predictions.filter((p: any) => p.prediction === 'Infected').length;
+    const uninfectedCount = predictions.filter((p: any) => p.prediction === 'Uninfected').length;
+    const insufficientCount = predictions.filter((p: any) => 
+      p.prediction === 'Insufficient Symptoms' || 
+      p.prediction?.toLowerCase().includes('insufficient')
+    ).length;
+    
+    console.log('📈 Calculated stats:', {
+      total: totalPredictions,
+      infected: infectedCount,
+      uninfected: uninfectedCount,
+      insufficient: insufficientCount,
+      sum: infectedCount + uninfectedCount + insufficientCount
+    });
+    
+    // Map recent activities (last 5) - handle insufficient symptoms
+    const recentActivity = predictions.slice(0, 5).map((p: any) => ({
+      id: p.id,
+      type: p.mode === 'clinical_only' ? 'Clinical' : 
+            p.mode === 'image_only' ? 'Image' : 'Fusion',
+      result: p.prediction === 'Insufficient Symptoms' ? 'Insufficient' : p.prediction,
+      fullResult: p.prediction, // Keep original for debugging
+      time: formatRelativeTime(p.timestamp)
+    }));
+
+    console.log('🕒 Recent activity:', recentActivity);
+
+    // Try to get accuracy from health endpoint
+    let accuracy = 94.5;
+    try {
+      console.log('🔍 Fetching health data...');
+      const healthResponse = await fetch('http://localhost:8000/health');
+      if (healthResponse.ok) {
+        const healthData = await healthResponse.json();
+        console.log('✅ Health data:', healthData);
+        if (healthData.statistics?.success_rate) {
+          accuracy = (healthData.statistics.success_rate * 100).toFixed(1);
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ Could not fetch accuracy, using default:', error);
+    }
+
+    return {
+      totalPredictions,
+      infectedCount,
+      uninfectedCount,
+      insufficientCount,
+      accuracy: Number(accuracy),
+      recentActivity
+    };
+    
+  } catch (error) {
+    console.error('❌ Error fetching dashboard stats:', error);
+    return {
+      totalPredictions: 0,
+      infectedCount: 0,
+      uninfectedCount: 0,
+      insufficientCount: 0,
+      accuracy: 0,
+      recentActivity: []
+    };
   }
 }
 
 export default async function DashboardPage() {
   const stats = await getStats()
+  
+  console.log('🎨 Rendering with stats:', stats);
 
   const features = [
     {
@@ -91,8 +177,9 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Stats Grid */}
+      {/* Stats Grid - Now with 4 cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Total Predictions */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
             <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
@@ -110,13 +197,14 @@ export default async function DashboardPage() {
           </p>
         </div>
 
+        {/* Infected Cases */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
             <div className="p-3 bg-red-100 dark:bg-red-900/20 rounded-lg">
               <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
             </div>
             <span className="text-xs font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-full">
-              {((stats.infectedCount / stats.totalPredictions) * 100).toFixed(1)}%
+              {stats.totalPredictions > 0 ? ((stats.infectedCount / stats.totalPredictions) * 100).toFixed(1) : '0'}%
             </span>
           </div>
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
@@ -127,13 +215,14 @@ export default async function DashboardPage() {
           </p>
         </div>
 
+        {/* Uninfected Cases */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
             <div className="p-3 bg-green-100 dark:bg-green-900/20 rounded-lg">
               <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
             </div>
             <span className="text-xs font-medium text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">
-              {((stats.uninfectedCount / stats.totalPredictions) * 100).toFixed(1)}%
+              {stats.totalPredictions > 0 ? ((stats.uninfectedCount / stats.totalPredictions) * 100).toFixed(1) : '0'}%
             </span>
           </div>
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
@@ -144,20 +233,21 @@ export default async function DashboardPage() {
           </p>
         </div>
 
+        {/* Insufficient Symptoms */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-purple-100 dark:bg-purple-900/20 rounded-lg">
-              <Activity className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+            <div className="p-3 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg">
+              <MinusCircle className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
             </div>
-            <span className="text-xs font-medium text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20 px-2 py-1 rounded-full">
-              Model
+            <span className="text-xs font-medium text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20 px-2 py-1 rounded-full">
+              {stats.totalPredictions > 0 ? ((stats.insufficientCount / stats.totalPredictions) * 100).toFixed(1) : '0'}%
             </span>
           </div>
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-            {stats.accuracy}%
+            {stats.insufficientCount?.toLocaleString() || '0'}
           </h3>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Model Accuracy
+            Insufficient Symptoms
           </p>
         </div>
       </div>
@@ -246,35 +336,43 @@ export default async function DashboardPage() {
               </Link>
             </div>
             <div className="space-y-4">
-              {stats.recentActivity.map((activity) => (
-                <div
-                  key={activity.id}
-                  className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-700 last:border-0"
-                >
-                  <div className="flex items-center">
-                    <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg mr-3">
-                      {activity.type === 'Clinical' && <Stethoscope className="h-4 w-4 text-blue-600" />}
-                      {activity.type === 'Image' && <ImageIcon className="h-4 w-4 text-green-600" />}
-                      {activity.type === 'Fusion' && <Layers className="h-4 w-4 text-purple-600" />}
+              {stats.recentActivity.length > 0 ? (
+                stats.recentActivity.map((activity) => (
+                  <div
+                    key={activity.id}
+                    className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-700 last:border-0"
+                  >
+                    <div className="flex items-center">
+                      <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg mr-3">
+                        {activity.type === 'Clinical' && <Stethoscope className="h-4 w-4 text-blue-600" />}
+                        {activity.type === 'Image' && <ImageIcon className="h-4 w-4 text-green-600" />}
+                        {activity.type === 'Fusion' && <Layers className="h-4 w-4 text-purple-600" />}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          {activity.type} Prediction
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {activity.time}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">
-                        {activity.type} Prediction
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {activity.time}
-                      </p>
-                    </div>
+                    <span className={`text-sm font-medium px-2 py-1 rounded-full ${
+                      activity.result === 'Infected' 
+                        ? 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400'
+                        : activity.result === 'Uninfected'
+                        ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                        : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400'
+                    }`}>
+                      {activity.result}
+                    </span>
                   </div>
-                  <span className={`text-sm font-medium px-2 py-1 rounded-full ${
-                    activity.result === 'Infected' 
-                      ? 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400'
-                      : 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
-                  }`}>
-                    {activity.result}
-                  </span>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-center text-gray-500 dark:text-gray-400 py-4">
+                  No recent activity
+                </p>
+              )}
             </div>
           </div>
         </div>
