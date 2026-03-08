@@ -558,7 +558,10 @@ export default function AnalyticsPage() {
                     cx="50%"
                     cy="50%"
                     outerRadius={80}
-                    label={({ mode, percentage }) => `${mode} (${percentage.toFixed(1)}%)`}
+                    label={({ name, percent = 0 }) => {
+                      const percentage = (percent * 100).toFixed(1);
+                      return `${name} (${percentage}%)`;
+                    }}
                   >
                     {data.modeDistribution.map((entry, index) => (
                       <Cell 

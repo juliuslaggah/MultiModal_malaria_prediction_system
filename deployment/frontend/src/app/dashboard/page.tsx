@@ -15,6 +15,14 @@ import {
   MinusCircle
 } from 'lucide-react'
 
+// Define the type for activity items
+interface ActivityItem {
+  id: number;
+  type: string;
+  result: string;
+  time: string;
+}
+
 // Helper function to format time (fixed for UTC timestamps)
 const formatRelativeTime = (timestamp: string): string => {
   const date = new Date(timestamp);
@@ -32,8 +40,11 @@ const getStats = async () => {
   try {
     console.log('🔍 Fetching from backend...');
     
+    // Use environment variable for API URL
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    
     // Fetch ALL predictions (up to 1000)
-    const response = await fetch('http://localhost:8000/history?skip=0&limit=1000', {
+    const response = await fetch(`${API_URL}/history?skip=0&limit=1000`, {
       cache: 'no-store'
     });
     
@@ -66,12 +77,11 @@ const getStats = async () => {
     });
     
     // Map recent activities (last 5) - handle insufficient symptoms
-    const recentActivity = predictions.slice(0, 5).map((p: any) => ({
+    const recentActivity: ActivityItem[] = predictions.slice(0, 5).map((p: any) => ({
       id: p.id,
       type: p.mode === 'clinical_only' ? 'Clinical' : 
             p.mode === 'image_only' ? 'Image' : 'Fusion',
       result: p.prediction === 'Insufficient Symptoms' ? 'Insufficient' : p.prediction,
-      fullResult: p.prediction, // Keep original for debugging
       time: formatRelativeTime(p.timestamp)
     }));
 
@@ -81,12 +91,13 @@ const getStats = async () => {
     let accuracy = 94.5;
     try {
       console.log('🔍 Fetching health data...');
-      const healthResponse = await fetch('http://localhost:8000/health');
+      const healthResponse = await fetch(`${API_URL}/health`);
       if (healthResponse.ok) {
         const healthData = await healthResponse.json();
         console.log('✅ Health data:', healthData);
         if (healthData.statistics?.success_rate) {
-          accuracy = (healthData.statistics.success_rate * 100).toFixed(1);
+          // FIXED: Proper type conversion
+          accuracy = parseFloat((healthData.statistics.success_rate * 100).toFixed(1));
         }
       }
     } catch (error) {
@@ -337,7 +348,7 @@ export default async function DashboardPage() {
             </div>
             <div className="space-y-4">
               {stats.recentActivity.length > 0 ? (
-                stats.recentActivity.map((activity) => (
+                stats.recentActivity.map((activity: ActivityItem) => (
                   <div
                     key={activity.id}
                     className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-700 last:border-0"

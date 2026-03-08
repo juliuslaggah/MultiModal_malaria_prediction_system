@@ -68,7 +68,7 @@ export default function HistoryPage() {
     mode: '',
     prediction: '',
     riskLevel: '',
-    dateRange: [] as [dayjs.Dayjs | null, dayjs.Dayjs | null] | null,
+    dateRange: null as [dayjs.Dayjs | null, dayjs.Dayjs | null] | null,
     search: ''
   });
 
