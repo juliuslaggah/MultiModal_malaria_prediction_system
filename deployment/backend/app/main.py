@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from . import models, database, api
+import uvicorn
 
 # ==========================================
 # 1. DATABASE INITIALIZATION
@@ -60,3 +61,19 @@ def read_root():
         "model_architecture": "Late Fusion (ShuffleNetV2 + XGBoost)",
         "explainability": "Enabled (SHAP + Grad-CAM)"
     }
+
+# ==========================================
+# 6. PORT BINDING FOR RENDER (ADDED FIX)
+# ==========================================
+if __name__ == "__main__":
+    # This is critical for Render deployment
+    port = int(os.getenv("PORT", 8000))  # Render uses PORT environment variable
+    host = os.getenv("HOST", "0.0.0.0")  # Must bind to 0.0.0.0 for Render
+    
+    uvicorn.run(
+        "app.main:app",
+        host=host,
+        port=port,
+        reload=False  # Set to False in production
+    )
+    
