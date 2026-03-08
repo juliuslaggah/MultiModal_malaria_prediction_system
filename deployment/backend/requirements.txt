@@ -14,3 +14,6 @@ lime
 matplotlib
 sqlalchemy
 psycopg2-binary
+python-dotenv>=1.0.0
+opencv-python-headless>=4.8.0
+
