@@ -43,7 +43,7 @@ type PredictionResult = {
   model_version?: string
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL?.trim() || "http://127.0.0.1:8000"
+const API_BASE = process.env.NEXT_PUBLIC_API_URL?.trim() || "https://multimodal-malaria-prediction-system-3.onrender.com"
 
 function joinUrl(base: string, path: string) {
   const b = base.endsWith("/") ? base.slice(0, -1) : base

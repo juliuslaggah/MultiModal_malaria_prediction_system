@@ -72,11 +72,13 @@ export default function HistoryPage() {
     search: ''
   });
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
   // Fetch predictions
   const fetchPredictions = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/history?skip=0&limit=100');
+      const response = await fetch(`${API_URL}/history?skip=0&limit=100`);
       if (!response.ok) {
         throw new Error('Failed to fetch');
       }
@@ -137,7 +139,7 @@ export default function HistoryPage() {
   // View prediction details
   const viewDetails = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:8000/predictions/${id}`);
+      const response = await fetch(`${API_URL}/predictions/${id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch');
       }
@@ -625,7 +627,7 @@ export default function HistoryPage() {
               <Card title="Grad-CAM Heatmap" size="small">
                 <div className="flex justify-center">
                   <img 
-                    src={`http://localhost:8000/static/heatmaps/${selectedPrediction.heatmap_path}`}
+                    src={`${API_URL}/static/heatmaps/${selectedPrediction.heatmap_path}`}
                     alt="Grad-CAM Heatmap"
                     className="max-w-full h-auto rounded-lg border shadow-sm"
                     style={{ maxHeight: '300px' }}
