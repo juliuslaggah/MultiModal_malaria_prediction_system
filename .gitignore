@@ -23,11 +23,9 @@ __pycache__/
 *.npy
 *.h5
 *.hdf5
-*.pkl
 *.pickle
 *.joblib
 *.pt
-*.pth
 *.weights.h5
 *.onnx
 *.pb

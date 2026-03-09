@@ -72,7 +72,7 @@ export default function HistoryPage() {
     search: ''
   });
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://multimodal-malaria-prediction-system-3.onrender.com';
 
   // Fetch predictions
   const fetchPredictions = async () => {
@@ -323,7 +323,7 @@ export default function HistoryPage() {
   ];
 
   return (
-    <div className="p-6">
+    <div className="p-6" style={{ minHeight: '100vh' }}>
       <Card
         title={
           <div className="flex items-center gap-3">
