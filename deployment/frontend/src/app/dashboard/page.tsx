@@ -1,3 +1,6 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link'
 import { 
   Stethoscope, 
@@ -23,7 +26,7 @@ interface ActivityItem {
   time: string;
 }
 
-// Helper function to format time (fixed for UTC timestamps)
+// Helper function to format time
 const formatRelativeTime = (timestamp: string): string => {
   const date = new Date(timestamp);
   const now = new Date();
@@ -35,31 +38,21 @@ const formatRelativeTime = (timestamp: string): string => {
   return `${Math.floor(diffInSeconds / 86400)} days ago`;
 };
 
-// This function now fetches REAL data from your backend
+// This function fetches data
 const getStats = async () => {
   try {
-    console.log('🔍 Fetching from backend...');
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://multimodal-malaria-prediction-system-3.onrender.com';
     
-    // Use environment variable for API URL
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-    
-    // Fetch ALL predictions (up to 1000)
     const response = await fetch(`${API_URL}/history?skip=0&limit=1000`, {
       cache: 'no-store'
     });
     
-    console.log('📡 Response status:', response.status);
-    
     if (!response.ok) {
-      console.error('❌ Response not OK:', response.status, response.statusText);
       throw new Error(`Failed to fetch: ${response.status}`);
     }
     
     const predictions = await response.json();
-    console.log('✅ Raw predictions data:', predictions);
-    console.log('📊 Number of predictions:', predictions.length);
     
-    // Calculate stats from real data - handle all cases
     const totalPredictions = predictions.length;
     const infectedCount = predictions.filter((p: any) => p.prediction === 'Infected').length;
     const uninfectedCount = predictions.filter((p: any) => p.prediction === 'Uninfected').length;
@@ -68,15 +61,6 @@ const getStats = async () => {
       p.prediction?.toLowerCase().includes('insufficient')
     ).length;
     
-    console.log('📈 Calculated stats:', {
-      total: totalPredictions,
-      infected: infectedCount,
-      uninfected: uninfectedCount,
-      insufficient: insufficientCount,
-      sum: infectedCount + uninfectedCount + insufficientCount
-    });
-    
-    // Map recent activities (last 5) - handle insufficient symptoms
     const recentActivity: ActivityItem[] = predictions.slice(0, 5).map((p: any) => ({
       id: p.id,
       type: p.mode === 'clinical_only' ? 'Clinical' : 
@@ -85,23 +69,17 @@ const getStats = async () => {
       time: formatRelativeTime(p.timestamp)
     }));
 
-    console.log('🕒 Recent activity:', recentActivity);
-
-    // Try to get accuracy from health endpoint
     let accuracy = 94.5;
     try {
-      console.log('🔍 Fetching health data...');
       const healthResponse = await fetch(`${API_URL}/health`);
       if (healthResponse.ok) {
         const healthData = await healthResponse.json();
-        console.log('✅ Health data:', healthData);
         if (healthData.statistics?.success_rate) {
-          // FIXED: Proper type conversion
           accuracy = parseFloat((healthData.statistics.success_rate * 100).toFixed(1));
         }
       }
     } catch (error) {
-      console.warn('⚠️ Could not fetch accuracy, using default:', error);
+      console.warn('Could not fetch accuracy, using default:', error);
     }
 
     return {
@@ -114,7 +92,7 @@ const getStats = async () => {
     };
     
   } catch (error) {
-    console.error('❌ Error fetching dashboard stats:', error);
+    console.error('Error fetching dashboard stats:', error);
     return {
       totalPredictions: 0,
       infectedCount: 0,
@@ -126,10 +104,29 @@ const getStats = async () => {
   }
 }
 
-export default async function DashboardPage() {
-  const stats = await getStats()
-  
-  console.log('🎨 Rendering with stats:', stats);
+export default function DashboardPage() {
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getStats();
+      setStats(data);
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   const features = [
     {
@@ -188,7 +185,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Stats Grid - Now with 4 cards */}
+      {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Total Predictions */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow">
