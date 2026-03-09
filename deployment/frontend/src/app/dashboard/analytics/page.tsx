@@ -156,11 +156,13 @@ export default function AnalyticsPage() {
     recentTrends: []
   });
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://multimodal-malaria-prediction-system-3.onrender.com';
+
   const fetchAnalytics = async () => {
     setLoading(true);
     try {
       // Fetch all predictions
-      const response = await fetch('http://localhost:8000/history?skip=0&limit=1000');
+      const response = await fetch(`${API_URL}/history?skip=0&limit=1000`);
       if (!response.ok) throw new Error('Failed to fetch');
       const predictions: Prediction[] = await response.json();
 
@@ -325,7 +327,7 @@ export default function AnalyticsPage() {
             imagePreds.filter(p => p.prediction === 'Infected').length / imagePreds.length * 100 : 0,
           fusion_accuracy: fusionPreds.length ? 
             fusionPreds.filter(p => p.prediction === 'Infected').length / fusionPreds.length * 100 : 0,
-          avgClinicalTime: 0.023, // You can calculate from actual data if available
+          avgClinicalTime: 0.023,
           avgImageTime: 0.045,
           avgFusionTime: 0.067
         },
@@ -468,7 +470,7 @@ export default function AnalyticsPage() {
               </Tag>
             }
           >
-            <div style={{ height: 300 }}>
+            <div style={{ height: 300, width: '100%', minHeight: 300 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={data.trends}>
                   <defs>
@@ -515,7 +517,7 @@ export default function AnalyticsPage() {
             loading={loading}
             className="shadow-sm"
           >
-            <div style={{ height: 300 }}>
+            <div style={{ height: 300, width: '100%', minHeight: 300 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={data.trends}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -548,7 +550,7 @@ export default function AnalyticsPage() {
             loading={loading}
             className="shadow-sm"
           >
-            <div style={{ height: 280 }}>
+            <div style={{ height: 280, width: '100%', minHeight: 280 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -588,7 +590,7 @@ export default function AnalyticsPage() {
             loading={loading}
             className="shadow-sm"
           >
-            <div style={{ height: 280 }}>
+            <div style={{ height: 280, width: '100%', minHeight: 280 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data.riskDistribution} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" />
@@ -625,7 +627,7 @@ export default function AnalyticsPage() {
             loading={loading}
             className="shadow-sm"
           >
-            <div style={{ height: 280 }}>
+            <div style={{ height: 280, width: '100%', minHeight: 280 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data.hourlyDistribution}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -745,7 +747,7 @@ export default function AnalyticsPage() {
             loading={loading}
             className="shadow-sm"
           >
-            <div style={{ height: 250 }}>
+            <div style={{ height: 250, width: '100%', minHeight: 250 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={data.recentTrends}>
                   <CartesianGrid strokeDasharray="3 3" />
